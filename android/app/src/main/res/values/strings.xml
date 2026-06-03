@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">liss_effect</string>
+    <string name="title_activity_main">liss_effect</string>
+    <string name="package_name">com.tusalon.lisseffect</string>
+    <string name="custom_url_scheme">com.tusalon.lisseffect</string>
+</resources>

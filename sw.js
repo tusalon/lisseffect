@@ -1,6 +1,6 @@
 // sw.js - Service Worker para liss_effect
 
-const CACHE_NAME = 'lisseffect-v1';
+const CACHE_NAME = 'lisseffect-v49';
 const urlsToCache = [
   '/lisseffect/',
   '/lisseffect/index.html',
@@ -17,7 +17,16 @@ const urlsToCache = [
   '/lisseffect/icons/icon-152x152.png',
   '/lisseffect/icons/icon-192x192.png',
   '/lisseffect/icons/icon-384x384.png',
-  '/lisseffect/icons/icon-512x512.png'
+  '/lisseffect/icons/icon-512x512.png',
+  '/lisseffect/vendor/react.production.min.js',
+  '/lisseffect/vendor/react-dom.production.min.js',
+  '/lisseffect/vendor/babel.min.js',
+  '/lisseffect/vendor/bcrypt.min.js',
+  '/lisseffect/vendor/tailwind-browser.js',
+  '/lisseffect/vendor/lucide/lucide.css',
+  '/lisseffect/vendor/lucide/lucide.woff2',
+  '/lisseffect/utils/push-config.js',
+  '/lisseffect/utils/push-notifications.js'
 ];
 
 // ============================================
@@ -137,6 +146,51 @@ self.addEventListener('message', event => {
       });
     });
   }
+});
+
+// ============================================
+// WEB PUSH OPCIONAL
+// ============================================
+self.addEventListener('push', event => {
+  let payload = {};
+
+  try {
+    payload = event.data ? event.data.json() : {};
+  } catch (error) {
+    payload = {
+      title: 'RservasRoma',
+      body: event.data ? event.data.text() : 'Tienes una nueva notificación'
+    };
+  }
+
+  const title = payload.title || 'RservasRoma';
+  const options = {
+    body: payload.body || 'Tienes una nueva notificación',
+    icon: '/lisseffect/icons/icon-192x192.png',
+    badge: '/lisseffect/icons/icon-96x96.png',
+    tag: payload.tag || 'rservasroma',
+    data: {
+      url: payload.url || '/lisseffect/admin.html',
+      ...(payload.data || {})
+    }
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+
+  const targetUrl = event.notification?.data?.url || '/lisseffect/admin.html';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url.includes(targetUrl) && 'focus' in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+      return null;
+    })
+  );
 });
 
 console.log('✅ Service Worker configurado para liss_effect');

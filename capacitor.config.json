@@ -1,0 +1,12 @@
+{
+  "appId": "com.tusalon.lisseffect",
+  "appName": "liss_effect",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
